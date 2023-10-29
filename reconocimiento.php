@@ -22,9 +22,7 @@
 	<body>
 		
         <div class="container">    
-            <p class="lead">
-      			Generador de recetas
-    		</p>
+            <h2>Generador de recetas</h2>
     		
 			<div class="row">
 				<div class="col-md-6">

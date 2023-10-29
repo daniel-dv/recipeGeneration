@@ -22,11 +22,9 @@
 	<body>
 		
         <div class="container">    
-            <p class="lead">
-      			Generador de recetas
-    		</p>
+            <h2>Generador de recetas</h2>
 
-            <h1 class="mt-4">Subir Imagen</h1>
+            <h4 class="mt-4">Subir Imagen</h4>
                 <form action="reconocimiento.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                     <div class="form-group">
                         <label for="file">Seleccionar una imagen: </label>
