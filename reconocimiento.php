@@ -28,6 +28,7 @@
 				<div class="col-md-6">
                     <!-- Mostrar la imagen subida -->
                     <?php
+                    $targetFile ="";
                     if(isset($_POST['submit'])){
                         if(isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK){
                             $file = $_FILES['file'];
@@ -42,13 +43,45 @@
                             }
                         }
                     }
+                    // La URL de API Flask
+                    $api_url = 'http://127.0.0.1:5000/detect';
+                    
+                    // El path al archivo 
+                    $image_path = $targetFile;
+                    
+                    // Inicializar cURL
+                    $curl = curl_init();
+                    
+                    // Configurar las opciones de cURL para la solicitud POST
+                    curl_setopt($curl, CURLOPT_URL, $api_url);
+                    curl_setopt($curl, CURLOPT_POST, true);
+                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); //solo en desarrollo
+                    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); //solo en desarrollo
+                    
+                    // Adjuntar el archivo con el tipo de campo 'file'
+                    $cfile = curl_file_create($image_path);
+                    $data = array('file' => $cfile);
+                    
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                    
+                    // Ejecutar la solicitud cURL
+                    $response = curl_exec($curl);
+                    
+
+                    // Cerrar la sesión cURL
+                    curl_close($curl);
+                    
+                    // Decodificar la respuesta JSON
+                    $responseData = json_decode($response, true);
+                    
                     ?>
                     
                 </div> 
                 <div class="col-md-6">
                 	<?php 
                     //llamar a API de reconocimiento de imagenes
-                	$ingredientes =array("tomato","lechuga","huevo","milanesa");
+                	$ingredientes = array_unique($responseData);
                 	?>
             
         			<form action="prediccion.php" method="post">
