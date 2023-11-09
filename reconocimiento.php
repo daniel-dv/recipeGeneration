@@ -26,7 +26,6 @@
     		
 			<div class="row">
 				<div class="col-md-6">
-                    <!-- Mostrar la imagen subida -->
                     <?php
                     $targetFile ="";
                     if(isset($_POST['submit'])){
@@ -43,10 +42,10 @@
                             }
                         }
                     }
-                    // La URL de API Flask
+                    // URL de API
                     $api_url = 'http://127.0.0.1:5000/detect';
                     
-                    // El path al archivo 
+                    // Path al archivo 
                     $image_path = $targetFile;
                     
                     // Inicializar cURL
@@ -67,7 +66,7 @@
                     
                     // Ejecutar la solicitud cURL
                     $response = curl_exec($curl);
-                    
+
 
                     // Cerrar la sesión cURL
                     curl_close($curl);
@@ -80,8 +79,10 @@
                 </div> 
                 <div class="col-md-6">
                 	<?php 
-                    //llamar a API de reconocimiento de imagenes
-                	$ingredientes = array_unique($responseData);
+                	if ($responseData == null)
+                	    $ingredientes = [];
+                	else
+                	    $ingredientes = array_values(array_unique($responseData));
                 	?>
             
         			<form action="prediccion.php" method="post">
@@ -92,7 +93,6 @@
         				    echo "<label class=\"form-check-label\">" . $ingredientes[$i]. "</label>";
         				    echo "</div>";
         				}
-        				        
         				?>
         				<div class="form-check">
                           <input class="form-check-input" type="checkbox" name="otro">

@@ -35,12 +35,50 @@
           	}
       	}
         ?>
+        
+        <?php 
+        $api_url = 'http://127.0.0.1:5001/generate';
+        $ingredientesAEnviar = $ingredientes[0];
+        for ($i=1; $i<count($ingredientes); $i++)
+            $ingredientesAEnviar .= ", ".$ingredientes[$i];
+
+        $data = [
+        'texto' => $ingredientesAEnviar,
+        'max_length' => 150
+        ];
+        
+        // Iniciar cURL
+        $ch = curl_init($api_url);
+        
+        // Configurar la solicitud POST
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        
+        // Ejecutar la solicitud y obtener la respuesta
+        $response = curl_exec($ch);
+        
+        // Cerrar cURL
+        curl_close($ch);
+        
+        // Decodificar la respuesta JSON
+        $responseData = json_decode($response, true);
+        
+
+        $respuesta = $responseData['generated_text'];
+
+        $partes = explode("steps", $respuesta);
+
+        $pasos = $partes[1] ?? 'No se han encontrado pasos.'; // El operador ?? maneja el caso de que no se encuentre " steps: "
+        $pasos = ucfirst(substr($pasos,4));
+        ?>
       </tbody>
     </table>
     <form>
       <div class="mb-3">
         <label for="receta" class="form-label">Receta:</label>
-        <textarea class="form-control" id="receta" name="receta" rows="10" readonly></textarea>
+        <textarea class="form-control" id="receta" name="receta" rows="10" readonly ><?php echo $pasos;?></textarea>
       </div>
     </form>
   </div>
