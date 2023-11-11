@@ -55,7 +55,6 @@
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        
         // Ejecutar la solicitud y obtener la respuesta
         $response = curl_exec($ch);
         
@@ -71,7 +70,7 @@
         $partes = explode("steps", $respuesta);
 
         $pasos = $partes[1] ?? 'No se han encontrado pasos.'; // El operador ?? maneja el caso de que no se encuentre " steps: "
-        $pasos = ucfirst(substr($pasos,4));
+        $pasos = ucfirst(substr($pasos,3));
         ?>
       </tbody>
     </table>
