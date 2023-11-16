@@ -17,6 +17,19 @@
                 return true;
             }
         </script>
+        <script>
+            var checkbox = document.getElementById('checkboxOtro');
+            var inputTexto = document.getElementById('descripcionOtro');
+        
+            inputTexto.addEventListener('input', function() {
+                if (inputTexto.value.length > 0) {
+                    checkbox.checked = true;
+                } else {
+                    // Desmarca el checkbox si el texto se borra
+                    checkbox.checked = false;
+                }
+            });
+        </script>
 	</head>
 
 	<body>
@@ -95,8 +108,8 @@
         				}
         				?>
         				<div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="otro">
-                          <input type="text" class="form-check-label" name="otroDescripcion" placeholder="Separados por coma">
+                          <input class="form-check-input" id="checkboxOtro" type="checkbox" name="otro">
+                          <input type="text" class="form-check-label" id="descripcionOtro" name="otroDescripcion" placeholder="Separados por coma">
                         </div>
                         <button type="submit" class="btn btn-primary">Generar receta</button>
         			</form>
@@ -104,5 +117,18 @@
 			</div>
     	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+		        <script>
+            var checkbox = document.getElementById('checkboxOtro');
+            var inputTexto = document.getElementById('descripcionOtro');
+        
+            inputTexto.addEventListener('input', function() {
+                if (inputTexto.value.length > 0) {
+                    checkbox.checked = true;
+                } else {
+                    // Desmarca el checkbox si el texto se borra
+                    checkbox.checked = false;
+                }
+            });
+        </script>
 	</body>
 </html>
