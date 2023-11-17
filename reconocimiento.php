@@ -100,10 +100,20 @@
             
         			<form action="prediccion.php" method="post">
         				<?php
-        				for($i=0; $i<count($ingredientes); $i++){
+        				include 'Receta.php';
+        				include 'Ingrediente.php';
+        				
+        				$receta = new Receta();
+        				for ($i=0; $i<count($ingredientes);$i++){
+        				    $receta->agregarIngrediente(new Ingrediente($ingredientes[$i]));
+        				    
+        				}
+
+        				
+        				for($i=0; $i<$receta->getCantidadIngredientes(); $i++){
         				    echo "<div class=\"form-check\">";
-        				    echo "<input class=\"form-check-input\" type=\"checkbox\" checked name=\"".$ingredientes[$i]."\">";
-        				    echo "<label class=\"form-check-label\">" . $ingredientes[$i]. "</label>";
+        				    echo "<input class=\"form-check-input\" type=\"checkbox\" checked name=\"".$receta->getIngrediente($i)."\">";
+        				    echo "<label class=\"form-check-label\">" . $receta->getIngrediente($i). "</label>";
         				    echo "</div>";
         				}
         				?>

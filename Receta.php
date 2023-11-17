@@ -35,6 +35,13 @@ class Receta {
         return $this->pasos;
     }
     
+    public function getStringIngredientes(){
+        $ingredientesAEnviar = $this->ingredientes[0];
+        for ($i=1; $i<$this->getCantidadIngredientes(); $i++)
+            $ingredientesAEnviar .= ", ".$this->ingredientes[$i];
+        return $ingredientesAEnviar;
+    }
+    
     public function __toString() {
         $informacion = "Receta:\n\nIngredientes:\n";
         foreach ($this->ingredientes as $ingrediente) {

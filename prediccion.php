@@ -16,19 +16,25 @@
       </thead>
       <tbody>
       	<?php 
+      	include 'Receta.php';
+      	include 'Ingrediente.php';
       	if(isset($_POST)){
+      	    $receta = new Receta();
+      	    
           	$ingredientes=array();
           	
           	foreach ($_POST as $clave=>$valor)
           	    if($clave != "otro" && $clave != "otroDescripcion")
-          	        array_push($ingredientes, str_replace(' ', '', $clave));
+          	        $receta->agregarIngrediente(new Ingrediente(str_replace(' ', '', $clave)));
           	        
           	        if (isset($_POST["otro"]) && isset($_POST["otroDescripcion"]) && $_POST["otroDescripcion"] != ""){
           	            foreach (explode(",",$_POST["otroDescripcion"]) as $otroIngrediente)
-          	                array_push($ingredientes, str_replace(' ','', $otroIngrediente));
+          	                $receta->agregarIngrediente(new Ingrediente(str_replace(' ','', $otroIngrediente)));
+//           	                array_push($ingredientes, str_replace(' ','', $otroIngrediente));
           	        }
-          	        
-          	foreach ($ingredientes as $ingrediente){
+          	
+          	              
+          	foreach ($receta->getIngredientes() as $ingrediente){
           	    echo "<tr>";
           	    echo "<td scope=\"row\">".ucfirst($ingrediente)."</td>";
           	    echo "</tr>";
@@ -38,12 +44,12 @@
         
         <?php 
         $api_url = 'http://127.0.0.1:5001/generate';
-        $ingredientesAEnviar = $ingredientes[0];
-        for ($i=1; $i<count($ingredientes); $i++)
-            $ingredientesAEnviar .= ", ".$ingredientes[$i];
+//         $ingredientesAEnviar = $ingredientes[0];
+//         for ($i=1; $i<count($ingredientes); $i++)
+//             $ingredientesAEnviar .= ", ".$ingredientes[$i];
 
         $data = [
-        'texto' => $ingredientesAEnviar,
+        'texto' => $receta->getStringIngredientes(),
         'max_length' => 150
         ];
         
