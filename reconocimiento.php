@@ -46,7 +46,16 @@
                             $file = $_FILES['file'];
                             if($file['type'] == 'image/jpeg' || $file['type'] == 'image/png' || $file['type'] == 'image/jpg'){
                                 $targetDirectory = "uploads/";
-                                $targetFile = $targetDirectory . basename($file['name']);
+                                
+                                // Extrayendo la extensión del archivo
+                                $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                                
+                                // Generando un nombre de archivo hasheado
+                                $hashedFilename = hash('sha256', uniqid()) . '.' . $fileExtension;
+                                
+                                // Construyendo la ruta de destino con el nuevo nombre
+                                $targetFile = $targetDirectory . $hashedFilename;
+                                
                                 if(move_uploaded_file($file['tmp_name'], $targetFile)){
                                     echo '<h2 class="mt-4">Imagen Subida:</h2>';
                                     echo '<img src="' . $targetFile . '" class="img-fluid" width="400" >';
@@ -87,6 +96,7 @@
                     // Decodificar la respuesta JSON
                     $responseData = json_decode($response, true);
                     
+
                     ?>
                     
                 </div> 
@@ -99,16 +109,17 @@
                 	?>
             
         			<form action="prediccion.php" method="post">
+        				
         				<?php
         				include 'Receta.php';
         				include 'Ingrediente.php';
-        				
+        				echo '<input type="hidden" name="nombreDeArchivo" value="' . $hashedFilename . '">';
         				$receta = new Receta();
         				for ($i=0; $i<count($ingredientes);$i++){
         				    $receta->agregarIngrediente(new Ingrediente($ingredientes[$i]));
         				    
         				}
-
+                        
         				
         				for($i=0; $i<$receta->getCantidadIngredientes(); $i++){
         				    echo "<div class=\"form-check\">";

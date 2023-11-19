@@ -4,6 +4,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <title>Receta</title>
+  <?php 
+  function agregarIngredienteBBDD($pdo, $ingrediente, $detectado, $id) {
+      $nombreIngrediente = $ingrediente->getNombre(); //preprocesamiento, todo uppercase y eliminar espacios
+      $consultaSQL= "select id from ingrediente where nombreIngrediente = ?";
+      $stmt = $pdo->prepare ($consultaSQL);
+      $stmt->execute (array($nombreIngrediente));
+      if ($stmt->rowCount()>0){
+          $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+          $idIngrediente = $fila['id'];
+          $consultaSQL= "insert into logxingrediente (idLog, idIngrediente, detectado) values (?,?,?)";
+          $stmt = $pdo->prepare ($consultaSQL);
+          $stmt->execute (array($id, $idIngrediente, $detectado));
+      }
+      else{
+          $consultaSQL= "insert into ingrediente (nombreIngrediente) values (?)";
+          $stmt = $pdo->prepare ($consultaSQL);
+          $stmt->execute (array($nombreIngrediente));
+          $idIngrediente = $pdo->lastInsertId();
+          
+          $consultaSQL= "insert into logxingrediente (idLog, idIngrediente, detectado) values (?,?,?)";
+          $stmt = $pdo->prepare ($consultaSQL);
+          $stmt->execute (array($id, $idIngrediente, $detectado));
+      }
+  }
+  ?>
 </head>
 <body>
   <div class="container">
@@ -21,19 +46,43 @@
       	if(isset($_POST)){
       	    $receta = new Receta();
       	    
-          	$ingredientes=array();
+
+      	    //Ingreso en bbdd
+      	    
+      	    $datosBBDD = "mysql:host=127.0.0.1;dbname=recipegenerationlog";
+      	    $username="usuario1";
+      	    $password="123456";
+      	    $pdo = new PDO($datosBBDD, $username, $password);
+      	    
+      	    $consultaSQL= "insert into log (nombreImagen) values (?)";
+      	    $stmt = $pdo->prepare ($consultaSQL);
+      	    $stmt->execute (array($_POST['nombreDeArchivo']));
+      	    
+      	    $idLog = $pdo->lastInsertId();
+      	    //fin bbdd
+      	    
+      	    
+          	
+          	
           	
           	foreach ($_POST as $clave=>$valor)
-          	    if($clave != "otro" && $clave != "otroDescripcion")
-          	        $receta->agregarIngrediente(new Ingrediente(str_replace(' ', '', $clave)));
+          	    if($clave != "otro" && $clave != "otroDescripcion" && $clave != "nombreDeArchivo"){
+          	        $ingredienteAAgregar = new Ingrediente(str_replace(' ', '', $clave));
+          	        $receta->agregarIngrediente($ingredienteAAgregar);
+          	        agregarIngredienteBBDD($pdo, $ingredienteAAgregar, true, $idLog);
+          	    }
           	        
-          	        if (isset($_POST["otro"]) && isset($_POST["otroDescripcion"]) && $_POST["otroDescripcion"] != ""){
-          	            foreach (explode(",",$_POST["otroDescripcion"]) as $otroIngrediente)
-          	                $receta->agregarIngrediente(new Ingrediente(str_replace(' ','', $otroIngrediente)));
-//           	                array_push($ingredientes, str_replace(' ','', $otroIngrediente));
-          	        }
+  	        if (isset($_POST["otro"]) && isset($_POST["otroDescripcion"]) && $_POST["otroDescripcion"] != ""){
+  	            foreach (explode(",",$_POST["otroDescripcion"]) as $otroIngrediente){
+  	                $ingredienteAAgregar = new Ingrediente(str_replace(' ', '', $otroIngrediente));
+  	                $receta->agregarIngrediente($ingredienteAAgregar);
+  	                agregarIngredienteBBDD($pdo, $ingredienteAAgregar, false, $idLog);
+  	            }
+  	        }
           	
-          	              
+
+  	        
+  	        
           	foreach ($receta->getIngredientes() as $ingrediente){
           	    echo "<tr>";
           	    echo "<td scope=\"row\">".ucfirst($ingrediente)."</td>";
